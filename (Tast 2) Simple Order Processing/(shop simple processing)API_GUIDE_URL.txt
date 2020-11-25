@@ -1,0 +1,47 @@
+PRODUCT
+
+(SAVE/ADD PRODUCT)
+URL: /save/product
+
+(UPDATE PRODUCT BASE ON ID PARAMETER)
+URL: /update/product/:id 
+
+POST Body(JSON) Example:
+{
+	"product_name": "Sample Product",
+	"category": "Sample Product Category",
+}
+
+(GET ALL PRODUCTS)
+URL: /get/product
+
+(FIND 1 RECORD FROM PRODUCT BASE ON ID PARAMETER)
+URL: /find/product/:id
+
+(DELETE PRODUCT BASE ON ID PARAMETER)
+URL: /delete/product/:id
+
+*******************************************************************
+
+ORDER
+
+(SAVE/ADD order)
+URL: /save/order
+
+(UPDATE ORDER BASE ON ID PARAMETER)
+URL: /update/order/:id 
+
+POST Body(JSON) Example:
+{
+	"order_name": "Sample order",
+	"category": "Sample order Category",
+}
+
+(GET ALL ORDERS)
+URL: /get/order
+
+(FIND 1 RECORD FROM ORDERS BASE ON ID PARAMETER)
+URL: /find/order/:id
+
+(DELETE ORDER BASE ON ID PARAMETER)
+URL: /delete/order/:id
