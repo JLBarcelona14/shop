@@ -7,35 +7,38 @@ I also create a actual database named "sandwich_shop.sql" so you can test the qu
 Task #3:
 Using the ER diagram you created above, write SQL queries to help Tom and the managers see:
 1. How many orders there were per store per day.
-	SELECT b.store_name,a.order_date,count(a.order_id) as order_per_day FROM orders a LEFT JOIN shop b on a.shop_id = b.shop_id where date(a.created_at) = date('2020-11-22') GROUP BY b.store_name;
+	SELECT b.store_name,DATE(a.order_date) as date,count(a.order_id) as order_per_day FROM orders a LEFT JOIN shop b on a.shop_id = b.shop_id  GROUP BY b.shop_id, DATE(a.order_date);
 
 2.What the most popular sandwich is at each store between the hours of 12:00 and 14:00.
 
-	SELECT c.store_name,d.product_name,MAX(b.qty_sum) as total_orders from orders a 
-	LEFT JOIN(SELECT product_id,order_id,sum(qty) as qty_sum from order_detail GROUP BY product_id ORDER BY sum(qty)) as b on a.order_id = b.order_id
-	LEFT JOIN shop c on a.shop_id = c.shop_id
-	LEFT JOIN product d on b.product_id = d.product_id
-	LEFT JOIN product_category e on d.category_id = e.category_id
-	WHERE e.category_name = 'Sandwich' and date(a.created_at) = date('2020-11-22') and HOUR(a.order_time) between HOUR('12:00:00') AND HOUR('14:00:00') 
-	GROUP BY c.shop_id;
+	SELECT b.store_name,d.product_name,DATE(a.order_date) as date,a.order_time as time,max(c.qty) as order_per_day FROM orders a 
+	LEFT JOIN shop b on a.shop_id = b.shop_id 
+	INNER JOIN order_detail c on a.order_id = c.order_id
+	INNER JOIN product d on c.product_id = d.product_id
+	INNER JOIN product_category e on d.category_id = e.category_id
+	WHERE HOUR(a.order_time) between HOUR('12:00:00') AND HOUR('14:00:00') and e.category_name = 'Sandwich' 
+	GROUP BY b.shop_id, DATE(a.order_date)
+	ORDER BY max(c.qty) desc;
 
 3.Which employee has made the most sales (in dollars) in the last 30 days.
 
-	SELECT a.store_name,concat(c.firstname,' ',c.lastname) as employee_name,max(b.sales) from shop a
-	LEFT JOIN (SELECT shop_id,employee_id,sum(total_payment) as sales from orders where date(order_date) BETWEEN NOW() - INTERVAL 30 DAY AND NOW() GROUP BY employee_id ORDER BY employee_id desc) as b on a.shop_id = b.shop_id
-	LEFT JOIN employee c on b.employee_id = c.employee_id
-	GROUP BY a.shop_id;
+	SELECT a.store_name,concat(c.firstname,' ',c.lastname) as employee_name, sum(b.total_payment) sales from shop a
+	INNER JOIN orders b on a.shop_id = b.shop_id
+	INNER JOIN employee c on b.employee_id = c.employee_id
+	WHERE date(b.order_date) BETWEEN NOW() - INTERVAL 30 DAY AND NOW()
+	GROUP BY b.shop_id, b.employee_id
+	ORDER BY sum(b.total_payment) desc;
 
 
 4.Which drink is the most popular choice to go with the “Lake Erie Submarine”
 
-	SELECT c.store_name,d.product_name,MAX(b.qty_sum) as total_orders from orders a 
-	LEFT JOIN(SELECT product_id,order_id,sum(qty) as qty_sum from order_detail GROUP BY product_id ORDER BY sum(qty)) as b on a.order_id = b.order_id
-	LEFT JOIN shop c on a.shop_id = c.shop_id
-	LEFT JOIN product d on b.product_id = d.product_id
-	LEFT JOIN product_category e on d.category_id = e.category_id
-	WHERE e.category_name = 'Drinks' and date(a.created_at) = date('2020-11-22') and HOUR(a.order_time) between HOUR('12:00:00') AND HOUR('14:00:00') 
-	GROUP BY c.shop_id;
+	SELECT b.store_name,d.product_name,DATE(a.order_date) as date,a.order_time as time,max(c.qty) as order_per_day FROM orders a 
+	LEFT JOIN shop b on a.shop_id = b.shop_id 
+	INNER JOIN order_detail c on a.order_id = c.order_id
+	INNER JOIN product d on c.product_id = d.product_id
+	INNER JOIN product_category e on d.category_id = e.category_id
+	WHERE a.shop_id = 3 and e.category_name = 'Drinks' 
+	ORDER BY max(c.qty) desc;
 
 
 Thanks,
