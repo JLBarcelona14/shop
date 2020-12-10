@@ -12,7 +12,7 @@ Using the ER diagram you created above, write SQL queries to help Tom and the ma
 2.What the most popular sandwich is at each store between the hours of 12:00 and 14:00.
 
 	SELECT b.store_name,d.product_name,DATE(a.order_date) as date,a.order_time as time,max(c.qty) as order_per_day FROM orders a 
-	LEFT JOIN shop b on a.shop_id = b.shop_id 
+	INNER JOIN shop b on a.shop_id = b.shop_id 
 	INNER JOIN order_detail c on a.order_id = c.order_id
 	INNER JOIN product d on c.product_id = d.product_id
 	INNER JOIN product_category e on d.category_id = e.category_id
@@ -37,7 +37,7 @@ Using the ER diagram you created above, write SQL queries to help Tom and the ma
 	INNER JOIN order_detail c on a.order_id = c.order_id
 	INNER JOIN product d on c.product_id = d.product_id
 	INNER JOIN product_category e on d.category_id = e.category_id
-	WHERE a.shop_id = 3 and e.category_name = 'Drinks' 
+	WHERE b.store_name = "Lake Erie Submarine" and e.category_name = 'Drinks' 
 	ORDER BY max(c.qty) desc;
 
 
